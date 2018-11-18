@@ -21,6 +21,7 @@ On your terminal, run the following commands:
 ```bash
 > git clone git@github.com:msmsh83/propertylisting.git
 > cd propertylisting
+> docker-compose build
 > docker-compose up
 ```
 
