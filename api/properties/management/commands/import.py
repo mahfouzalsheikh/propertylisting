@@ -30,6 +30,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         Prop.objects.all().delete()
         try:
+            props_to_insert = []
             with open(options['path'], 'r') as inputFile:
                 reader = csv.DictReader(inputFile)
                 for prop in reader:
@@ -59,34 +60,38 @@ class Command(BaseCommand):
                     
                     self.stdout.write('Importing %s' %(zillow_id))
 
-                    try:
-                        Prop.objects.create(
-                            area_unit=area_unit,
-                            bathrooms=bathrooms,
-                            bedrooms=bedrooms,
-                            home_size=home_size,
-                            home_type=home_type,
-                            last_sold_date=last_sold_date,
-                            last_sold_price=last_sold_price,
-                            link=link,
-                            price=price,
-                            property_size=property_size,
-                            rent_price=rent_price,
-                            rentzestimate_amount=rentzestimate_amount,
-                            rentzestimate_last_updated=rentzestimate_last_updated,
-                            tax_value=tax_value,
-                            tax_year=tax_year,
-                            year_built=year_built,
-                            zestimate_amount=zestimate_amount,
-                            zestimate_last_updated=zestimate_last_updated,
-                            zillow_id=zillow_id,
-                            address=address,
-                            city=city,
-                            state=state,
-                            zipcode=zipcode,
-                            )
-                    except IOError as error:
-                        self.stdout.write(self.style.ERROR('Failed to import %s' %(zillow_id)))
+                    prop = Prop(
+                        area_unit=area_unit,
+                        bathrooms=bathrooms,
+                        bedrooms=bedrooms,
+                        home_size=home_size,
+                        home_type=home_type,
+                        last_sold_date=last_sold_date,
+                        last_sold_price=last_sold_price,
+                        link=link,
+                        price=price,
+                        property_size=property_size,
+                        rent_price=rent_price,
+                        rentzestimate_amount=rentzestimate_amount,
+                        rentzestimate_last_updated=rentzestimate_last_updated,
+                        tax_value=tax_value,
+                        tax_year=tax_year,
+                        year_built=year_built,
+                        zestimate_amount=zestimate_amount,
+                        zestimate_last_updated=zestimate_last_updated,
+                        zillow_id=zillow_id,
+                        address=address,
+                        city=city,
+                        state=state,
+                        zipcode=zipcode,
+                    )
+                    
+                    # Added to the array for bulk creation.
+                    props_to_insert.append(prop)
+
+                # Injest all the records in one DB commit.
+                Prop.objects.bulk_create(props_to_insert)
+
 
         except IOError as error:
             self.stdout.write(self.style.ERROR(error))

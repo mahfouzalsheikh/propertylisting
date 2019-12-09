@@ -37,7 +37,7 @@ In your root directory:
 ##### Create a user so you can authenticate with the API:
 In your root directory:
 ```bash
-> docker-compose run web /usr/src/api/manage.py createsuperusers
+> docker-compose run web /usr/src/api/manage.py createsuperuser
 ```
 
 ##### Run the import script:
